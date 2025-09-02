@@ -356,19 +356,19 @@
                 scrub: 1.5
             }
         });
-
-        tl.to(":root", { "--bg-top": "#0E97EC", "--bg-bottom": "#0E97EC" }, ">")
-        .to(":root", { "--bg-top": "#0E97EC", "--bg-bottom": "#7385fa" }, ">")
-        .to(":root", { "--bg-top": "#7385fa", "--bg-bottom": "#7385fa" }, ">")
-        .to(":root", { "--bg-top": "#7385fa", "--bg-bottom": "#7385fa" }, ">")
-        .to(":root", { "--bg-top": "#6F83FC", "--bg-bottom": "#F79640" }, ">")
-        .to(":root", { "--bg-top": "#F79640", "--bg-bottom": "#BD4A1C" }, ">")
-        .to(":root", { "--bg-top": "#BD4A1C", "--bg-bottom": "#4a1120" }, ">")
-        .to(":root", { "--bg-top": "#4a1120", "--bg-bottom": "#210430" }, ">")
-        .to(":root", { "--bg-top": "#210430", "--bg-bottom": "#0d021c" }, ">")
-        .to(":root", { "--bg-top": "#0d021c", "--bg-bottom": "#0D0D25" }, ">")
-        .to(":root", { "--bg-top": "#0D0D25", "--bg-bottom": "#0D0D15" }, ">")
-        .to(":root", { "--bg-top": "#0D0D15", "--bg-bottom": "#000000" }, ">");
+        
+        tl.to(":root", { "--bg-top": "#0E97EC", "--bg-bottom": "#0E97EC" }, ">") // 7AM - 10AM
+        .to(":root", { "--bg-top": "#0E97EC", "--bg-bottom": "#3B92C4" }, ">") // 10AM - 12PM
+        .to(":root", { "--bg-top": "#3B92C4", "--bg-bottom": "#3B92C4" }, ">") // 12PM - 2PPM
+        .to(":root", { "--bg-top": "#3B92C4", "--bg-bottom": "#3B92C4" }, ">") // 2PM - 4PM
+        .to(":root", { "--bg-top": "#3B92C4", "--bg-bottom": "#F79640" }, ">") // 4PM - 5PM
+        .to(":root", { "--bg-top": "#F79640", "--bg-bottom": "#BD4A1C" }, ">") // 5PM - 6PM
+        .to(":root", { "--bg-top": "#BD4A1C", "--bg-bottom": "#4A1120" }, ">") // 6PM - 7PM
+        .to(":root", { "--bg-top": "#4A1120", "--bg-bottom": "#210430" }, ">") // 7PM - 8PM
+        .to(":root", { "--bg-top": "#210430", "--bg-bottom": "#0d021C" }, ">") // 8PM - 9PM
+        .to(":root", { "--bg-top": "#0d021C", "--bg-bottom": "#0D0D25" }, ">") // 9PM - 10PM
+        .to(":root", { "--bg-top": "#0D0D25", "--bg-bottom": "#0D0D15" }, ">") // 10PM - 11PM
+        .to(":root", { "--bg-top": "#0D0D15", "--bg-bottom": "#000000" }, ">"); // 11PM - 12AM
 
         gsap.to("#sun", {
             scrollTrigger: { trigger: "body", scrub: 1.5, end: "70% top", invalidateOnRefresh: true, anticipatePin: 1},
