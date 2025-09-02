@@ -37,7 +37,7 @@
     <style type="text/tailwindcss">
         :root {
             --bg-top: #0D0D25;
-            --bg-bottom: #075f96;
+            --bg-bottom: #0E97EC;
         }
 
         body {
@@ -357,24 +357,33 @@
             }
         });
 
-        // Background, Sun, Moon, and Stars animation
-        tl.to(":root", { "--bg-top": "#f3904f", "--bg-bottom": "#3b4371" }, ">") // Sunset
-          .to(":root", { "--bg-top": "#3b4371", "--bg-bottom": "#0D0D25" }, ">"); // Night
+        tl.to(":root", { "--bg-top": "#0E97EC", "--bg-bottom": "#0E97EC" }, ">")
+        .to(":root", { "--bg-top": "#0E97EC", "--bg-bottom": "#7385fa" }, ">")
+        .to(":root", { "--bg-top": "#7385fa", "--bg-bottom": "#7385fa" }, ">")
+        .to(":root", { "--bg-top": "#7385fa", "--bg-bottom": "#7385fa" }, ">")
+        .to(":root", { "--bg-top": "#6F83FC", "--bg-bottom": "#F79640" }, ">")
+        .to(":root", { "--bg-top": "#F79640", "--bg-bottom": "#BD4A1C" }, ">")
+        .to(":root", { "--bg-top": "#BD4A1C", "--bg-bottom": "#4a1120" }, ">")
+        .to(":root", { "--bg-top": "#4a1120", "--bg-bottom": "#210430" }, ">")
+        .to(":root", { "--bg-top": "#210430", "--bg-bottom": "#0d021c" }, ">")
+        .to(":root", { "--bg-top": "#0d021c", "--bg-bottom": "#0D0D25" }, ">")
+        .to(":root", { "--bg-top": "#0D0D25", "--bg-bottom": "#0D0D15" }, ">")
+        .to(":root", { "--bg-top": "#0D0D15", "--bg-bottom": "#000000" }, ">");
 
         gsap.to("#sun", {
-            scrollTrigger: { trigger: "body", scrub: 1.5, end: "50% top", invalidateOnRefresh: true, anticipatePin: 1},
-            
+            scrollTrigger: { trigger: "body", scrub: 1.5, end: "70% top", invalidateOnRefresh: true, anticipatePin: 1},
             y: () => window.innerHeight,
             ease: "power1.inOut"
         });
         
+        
         gsap.to("#moon", {
-            scrollTrigger: { trigger: "body", scrub: 1.5, start: "60% top" },
+            scrollTrigger: { trigger: "body", scrub: 1.5, start: "70% top" },
             y: "-40vh", opacity: 1, ease: "power1.out"
         });
 
         gsap.to("#stars-container", {
-            scrollTrigger: { trigger: "body", scrub: 1.5, start: "70% top" },
+            scrollTrigger: { trigger: "body", scrub: 1.5, start: "80% top" },
             opacity: 1
         });
 
