@@ -5,22 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Timeline of Our Memories ❤️</title>
 
-    <!-- TAILWIND CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- GOOGLE FONT - PLAYFAIR DISPLAY -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet"/>
 
-    <!-- LATEX RENDERER - KATEX -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
-    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 
@@ -65,7 +59,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: -3; /* Deepest layer */
+        z-index: -3;
         background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
       }
 
@@ -75,7 +69,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: -2; /* Above background, below content */
+        z-index: -2;
       }
 
       #sun,
@@ -131,23 +125,22 @@
           0 4px 30px rgba(0, 0, 0, 0.2);
       }
 
-      /* Polaroid Photo Effect (Updated with Glassy Aesthetic) */
+      /* Polaroid Photo Effect */
       .polaroid {
         @apply p-3 pb-16 rounded-lg relative transform rotate-[-180deg] transition-transform duration-300 hover:rotate-0;
-        background: rgba(255, 255, 255, 0.08); /* Semi-transparent background */
-        backdrop-filter: blur(10px); /* Glassy blur */
-        border: 1px solid rgba(255, 255, 255, 0.432); /* Subtle light border */
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.432);
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1),
-          inset 0 0 15px rgba(255, 255, 255, 0.05); /* Soft inner glow */
+          inset 0 0 15px rgba(255, 255, 255, 0.05);
       }
       .polaroid img {
-        @apply w-full h-auto object-cover rounded-md mt-8; /* Image itself is rounded */
-        border: 2px solid rgba(255, 255, 255, 0.2); /* Inner image border, slightly more pronounced */
-        box-shadow: 0 0 8px rgba(255, 255, 255, 0.1); /* Subtle glow around the image */
+        @apply w-full h-[512px] object-contain rounded-md mt-8;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
       }
       .polaroid figcaption {
         @apply absolute bottom-4 left-4 right-4 text-center text-brand-light font-serif italic text-xl font-bold;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); /* Text shadow for readability */
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
       }
 
       /* Quiz Card Specifics */
@@ -186,10 +179,49 @@
           transform: scale(1);
         }
       }
+      /* Shake animation for password modal */
+      .shake-animation {
+        animation: shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+      }
+
+      @keyframes shake {
+        10%,
+        90% {
+          transform: translate3d(-1px, 0, 0);
+        }
+        20%,
+        80% {
+          transform: translate3d(2px, 0, 0);
+        }
+        30%,
+        50%,
+        70% {
+          transform: translate3d(-4px, 0, 0);
+        }
+        40%,
+        60% {
+          transform: translate3d(4px, 0, 0);
+        }
+      }
     </style>
   </head>
 
   <body class="antialiased">
+    <div id="password-overlay" class="fixed inset-0 bg-brand-dark/80 backdrop-blur-md z-50 flex items-center justify-center transition-opacity duration-500">
+      <div id="password-modal" class="bg-white/5 border border-white/10 rounded-2xl p-8 shadow-2xl text-center w-[400px] max-w-sm">
+        <h2 class="text-2xl font-serif font-bold mb-4">Authorization Required</h2>
+        <p class="text-brand-light/60 mb-6 text-sm">
+          Please enter the passkey to view the timeline.
+        </p>
+        <form id="password-form">
+          <input type="password" id="password-input" class="bg-white/10 text-center w-full rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-brand-accent mb-4" placeholder="Enter Passkey Here"/>
+          <button type="submit" class="w-full bg-brand-accent hover:bg-brand-glow/80 text-brand-dark font-bold py-3 px-4 rounded-lg transition-colors duration-300">
+            Access Memories
+          </button>
+        </form>
+      </div>
+    </div>
+
     <audio id="background-music" loop preload="auto">
       <source src="assets/audio/audio.mp3" type="audio/mpeg" />
     </audio>
@@ -199,11 +231,11 @@
     <div id="sun"></div>
     <div id="moon"></div>
 
-    <div id="progress-bar">
+    <div id="progress-bar" hidden>
       <div id="progress-fill"></div>
     </div>
 
-    <main id="timeline-container" class="relative z-10 pt-20 pb-0">
+    <main id="timeline-container" class="relative z-10 pt-20 pb-0" hidden>
       <header class="timeline-item text-center">
         <h1
           class="text-7xl md:text-7xl font-serif font-bold text-brand-light mb-8 mt-6 font-black"
@@ -212,222 +244,87 @@
           Our Timeline
         </h1>
         <p class="text-base md:text-base text-brand-light/70 mt-8 font-thin">
-          Scroll down to relive the moments that made us.
+          Let's remind ourselves of how it all happened, word by word, piece by
+          piece, but unfortunately still not enough to contain the emotions I used
+          to feel, and definitely not what I feel today! Yet here I present to
+          you. The story of how I met my very own adoring girlfriend.
         </p>
       </header>
 
       <section class="timeline-item text-center">
-        <div
-          id="finale"
-          class="min-h-screen flex flex-col items-center justify-center"
-        >
+        <div id="finale" class="min-h-screen flex flex-col items-center justify-center">
           <h2 class="text-7xl md:text-7xl font-serif font-bold mb-6 mt-8">
-            Our Love Graph
+            ...Not Just Love
           </h2>
           <p class="text-base max-w-xl md:text-base text-brand-light/70 mb-8">
-            Every moment, every laugh, every challenge... they all added up.
-            This is how my love for you has grown—and continues to
-            grow—infinitely.
+            You think what I truly feel for you, can be encapsulated within these
+            four letters, although powerful, but surely not capable of actually
+            letting you know, that, it's not just love, it's a memory, something
+            no one else can give and the kind of memory I don't want from anyone
+            else. So, I dont just love you anymore. <br />
+            I. ABSOULUTELY ADORE. YOU. PRACHI.
           </p>
           <div class="w-full h-96 bg-white/5 backdrop-blur-xl rounded-xl p-4 shadow-2xl border border-white/10">
             <canvas id="loveGraph" class="w-full h-full"></canvas>
           </div>
+
           <div class="memory-card mt-8">
-            <p class="text-brand-light/80 text-xl font-semibold italic">Our Journey Through Time:</p>
-            <p class="mt-8 text-brand-light/80 text-sm font-thin">$ L(t) = \frac{28}{\frac{08}{25}} + \int_{0}^{t} \left( \frac{1}{\sqrt{x}} + \frac{\sin x + \cos x}{\sqrt{x}} \right) dx $</p>
-            <p class="mt-8 text-brand-light/80 text-base font-black">$ L(t_0^+) = \lim_{t \to \infty} L(t) $</p>
+            <p class="text-brand-light/80 text-xl font-semibold italic">
+              Our Journey Through Time:
+            </p>
+            <p class="mt-8 text-brand-light/80 text-sm font-thin">
+              $ L(t) = \frac{28}{\frac{08}{25}} + \int_{0}^{t} \left(
+              \frac{1}{\sqrt{x}} + \frac{\sin x + \cos x}{\sqrt{x}} \right) dx $
+            </p>
+            <p class="mt-8 text-brand-light/80 text-base font-black">
+              $ L(t_0^+) = \lim_{t \to \infty} L(t) $
+            </p>
           </div>
         </div>
       </section>
     </main>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // ===================================================================
-        // ================== 1. CONTENT CONFIGURATION =======================
-        // ===================================================================
+      // ===================================================================
+      // ================== 0. PASSWORD PROTECTION LOGIC ===================
+      // ===================================================================
+      function handlePasswordProtection() {
+        const CORRECT_PASSWORD = "28@08@2023";
+        const overlay = document.getElementById("password-overlay");
+        const modal = document.getElementById("password-modal");
+        const form = document.getElementById("password-form");
+        const input = document.getElementById("password-input");
+        const mainContent = document.getElementById("timeline-container");
+        const progressBar = document.getElementById("progress-bar");
 
-        const timelineData = [
-          {
-            type: "memory",
-            image: "https://placehold.co/600x400/FF8C8C/F0F0F0?text=First+Date",
-            caption: "Our First Date",
-            text: "It feels like just yesterday we were sitting across from each other, both a little nervous, not knowing this was the start of everything. The conversation flowed so easily, and I remember thinking I never wanted the night to end.",
-          },
-          {
-            type: "question",
-            question: "Where was our first official date?",
-            answers: [
-              "The Italian Restaurant",
-              "The Park Cafe",
-              "The Movie Theater",
-              "The Art Museum",
-            ],
-            correctAnswer: "The Park Cafe",
-          },
-          {
-            type: "memory",
-            image: "https://placehold.co/600x400/4ECDC4/F0F0F0?text=First+Trip",
-            caption: "Our First Road Trip",
-            text: "Remember packing the car, the perfect playlist on repeat, and the endless open road ahead? That trip taught me how amazing we are as a team, navigating new places and creating unforgettable memories every mile.",
-          },
-          {
-            type: "memory",
-            image:
-              "https://placehold.co/600x400/F79640/F0F0F0?text=Cozy+Nights",
-            caption: "Cozy Movie Nights",
-            text: "Some of my favorite memories are the simplest ones. Building a fort in the living room, surrounded by pillows and fairy lights, completely lost in a movie marathon. Those are the moments of pure, uncomplicated happiness.",
-          },
-          {
-            type: "question",
-            question: "What's my go-to snack for our movie nights?",
-            answers: [
-              "Popcorn with extra butter",
-              "Chocolate covered pretzels",
-              "Sour patch kids",
-              "A mix of everything",
-            ],
-            correctAnswer: "Popcorn with extra butter",
-          },
-          {
-            type: "memory",
-            image:
-              "https://placehold.co/600x400/89f7fe/0D0D25?text=Through+Thick+%26+Thin",
-            caption: "Through Thick & Thin",
-            text: "Life isn't always easy, but having you by my side makes every challenge conquerable. Your support is my rock, and your belief in me is my greatest strength. Thank you for being my constant.",
-          },
-        ];
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          if (input.value === CORRECT_PASSWORD) {
+            overlay.style.opacity = "0";
+            setTimeout(() => {
+              overlay.remove();
+              mainContent.removeAttribute("hidden");
+              progressBar.removeAttribute("hidden");
 
-        const loveGraphData = {
-          labels: [
-            "First Met",
-            "First Trip",
-            "Deep Talks",
-            "Big Support",
-            "Today",
-            "Forever",
-          ],
-          data: [100, 200, 300, 400, 500, 1000], // Added 'Forever' to show it keeps growing
-        };
-
-        // ===================================================================
-        // ================= 2. APPLICATION LOGIC ============================
-        // ===================================================================
-
-        gsap.registerPlugin(ScrollTrigger);
-        renderMathInElement(document.body, {
-          delimiters: [
-            { left: "$$", right: "$$", display: true }, // Display math
-            { left: "$", right: "$", display: false }, // Inline math
-          ],
-        });
-        const timelineContainer = document.getElementById("timeline-container");
-        const finaleSection = document.getElementById("finale");
-        let questions = [];
-
-        // --- Build Timeline from Data ---
-        function buildTimeline() {
-          let contentHtml = "";
-          timelineData.forEach((item, index) => {
-            if (item.type === "memory") {
-              contentHtml += `
-                        <section class="timeline-item">
-                            <div class="memory-card">
-                                <figure class="polaroid">
-                                    <img src="${
-                                      item.image
-                                    }" alt="Memory Image ${
-                index + 1
-              }" loading="lazy">
-                                    <figcaption>${item.caption}</figcaption>
-                                </figure>
-                                <p class="text-brand-light/80 md:text-lg mt-8">${
-                                  item.text
-                                }</p>
-                            </div>
-                        </section>`;
-            } else if (item.type === "question") {
-              const answersHtml = item.answers
-                .map(
-                  (answer) =>
-                    `<button class="answer-option" data-correct="${
-                      answer === item.correctAnswer
-                    }">${answer}</button>`
-                )
-                .join("");
-              contentHtml += `
-                        <section class="timeline-item">
-                            <div class="question-card relative" data-answered="false">
-                                <div class="confetti-container"></div>
-                                <h3 class="text-lg italic md:text-lg font-serif font-semibold mb-4">${item.question}</h3>
-                                <div class="answers-container">${answersHtml}</div>
-                            </div>
-                        </section>`;
-              questions.push(item);
-            }
-          });
-          finaleSection.parentElement.insertAdjacentHTML(
-            "beforebegin",
-            contentHtml
-          );
-        }
-        buildTimeline();
-
-        // --- Interactive Quiz Logic ---
-        document.querySelectorAll(".answers-container").forEach((container) => {
-          container.addEventListener("click", (e) => {
-            const button = e.target.closest(".answer-option");
-            if (button && !button.disabled) {
-              const parentCard = button.closest(".question-card");
-              if (parentCard.dataset.answered === "true") return;
-              parentCard.dataset.answered = "true";
-
-              const isCorrect = button.dataset.correct === "true";
-              parentCard
-                .querySelectorAll(".answer-option")
-                .forEach((opt) => (opt.disabled = true));
-
-              if (isCorrect) {
-                button.classList.add("correct");
-                triggerConfetti(
-                  parentCard.querySelector(".confetti-container")
-                );
-              } else {
-                button.classList.add("incorrect");
-                parentCard
-                  .querySelector('[data-correct="true"]')
-                  .classList.add("correct");
-              }
-            }
-          });
-        });
-
-        function triggerConfetti(container) {
-          for (let i = 0; i < 30; i++) {
-            const c = document.createElement("div");
-            c.classList.add("confetti");
-            c.style.left = `${Math.random() * 100}%`;
-            c.style.backgroundColor =
-              Math.random() > 0.5 ? "#FF8C8C" : "#4ECDC4";
-            const duration = 2 + Math.random() * 3;
-            const delay = Math.random() * 1;
-            c.style.animation = `fall ${duration}s ${delay}s linear forwards`;
-            c.style.setProperty(
-              "--rotate-deg",
-              `${Math.random() * 720 - 360}deg`
-            );
-            container.appendChild(c);
-            setTimeout(() => c.remove(), (duration + delay) * 1000 + 100);
+              // CRUCIAL: Initialize all animations AFTER content is visible.
+              initializeAnimations();
+            }, 500);
+          } else {
+            modal.classList.add("shake-animation");
+            input.value = "";
+            input.focus();
+            setTimeout(() => modal.classList.remove("shake-animation"), 600);
           }
-        }
+        });
+      }
+      handlePasswordProtection();
 
-        const styleSheet = document.createElement("style");
-        styleSheet.innerText = `@keyframes fall { from { transform: translateY(-20px) rotate(0deg); opacity: 1; } to { transform: translateY(200px) rotate(var(--rotate-deg)); opacity: 0; } }`;
-        document.head.appendChild(styleSheet);
-
-        // ===================================================================
-        // ================== 3. ANIMATION & EFFECTS =========================
-        // ===================================================================
+      // ===================================================================
+      // ================== 3. ANIMATION & EFFECTS LOGIC ===================
+      // ===================================================================
+      // This function will now contain ALL GSAP code.
+      function initializeAnimations() {
+        gsap.registerPlugin(ScrollTrigger);
 
         // --- Background Music Control ---
         const music = document.getElementById("background-music");
@@ -461,32 +358,25 @@
             scrub: 1,
           },
         });
-
         bgTl
-          .to(":root", { "--bg-top": "#0E97EC", "--bg-bottom": "#0E97EC" }, ">") // 7AM - 10AM
-          .to(":root", { "--bg-top": "#0E97EC", "--bg-bottom": "#3B92C4" }, ">") // 10AM - 12PM
-          .to(":root", { "--bg-top": "#3B92C4", "--bg-bottom": "#3B92C4" }, ">") // 12PM - 2PPM
-          .to(":root", { "--bg-top": "#3B92C4", "--bg-bottom": "#3B92C4" }, ">") // 2PM - 4PM
-          .to(":root", { "--bg-top": "#3B92C4", "--bg-bottom": "#F79640" }, ">") // 4PM - 5PM
-          .to(":root", { "--bg-top": "#F79640", "--bg-bottom": "#BD4A1C" }, ">") // 5PM - 6PM
-          .to(":root", { "--bg-top": "#BD4A1C", "--bg-bottom": "#4A1120" }, ">") // 6PM - 7PM
-          .to(":root", { "--bg-top": "#4A1120", "--bg-bottom": "#210430" }, ">") // 7PM - 8PM
-          .to(":root", { "--bg-top": "#210430", "--bg-bottom": "#0d021C" }, ">") // 8PM - 9PM
-          .to(":root", { "--bg-top": "#0d021C", "--bg-bottom": "#0D0D25" }, ">") // 9PM - 10PM
-          .to(":root", { "--bg-top": "#0D0D25", "--bg-bottom": "#0D0D15" }, ">") // 10PM - 11PM
-          .to(
-            ":root",
-            { "--bg-top": "#0D0D15", "--bg-bottom": "#000000" },
-            ">"
-          ); // 11PM - 12AM
+          .to(":root", { "--bg-top": "#0E97EC", "--bg-bottom": "#0E97EC" }, ">")
+          .to(":root", { "--bg-top": "#0E97EC", "--bg-bottom": "#3B92C4" }, ">")
+          .to(":root", { "--bg-top": "#3B92C4", "--bg-bottom": "#3B92C4" }, ">")
+          .to(":root", { "--bg-top": "#3B92C4", "--bg-bottom": "#3B92C4" }, ">")
+          .to(":root", { "--bg-top": "#3B92C4", "--bg-bottom": "#F79640" }, ">")
+          .to(":root", { "--bg-top": "#F79640", "--bg-bottom": "#BD4A1C" }, ">")
+          .to(":root", { "--bg-top": "#BD4A1C", "--bg-bottom": "#4A1120" }, ">")
+          .to(":root", { "--bg-top": "#4A1120", "--bg-bottom": "#210430" }, ">")
+          .to(":root", { "--bg-top": "#210430", "--bg-bottom": "#0d021C" }, ">")
+          .to(":root", { "--bg-top": "#0d021C", "--bg-bottom": "#0D0D25" }, ">")
+          .to(":root", { "--bg-top": "#0D0D25", "--bg-bottom": "#0D0D15" }, ">")
+          .to(":root",{ "--bg-top": "#0D0D15", "--bg-bottom": "#000000" }," >");
 
         gsap.to("#sun", {
           scrollTrigger: {
             trigger: "body",
             scrub: 1.5,
             end: "70% top",
-            invalidateOnRefresh: true,
-            anticipatePin: 1,
           },
           y: () => window.innerHeight,
           ease: "power1.inOut",
@@ -540,20 +430,16 @@
         let stars = [],
           particles = [],
           shootingStars = [];
-
         function resizeCanvas() {
           canvas.width = window.innerWidth;
           canvas.height = window.innerHeight;
         }
         resizeCanvas();
         window.addEventListener("resize", resizeCanvas);
-
-        // Star generation
         const starCount = 200;
         const heartConstellationIndices = [
           0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 0,
         ];
-
         for (let i = 0; i < starCount; i++) {
           stars.push({
             x: Math.random() * canvas.width,
@@ -563,8 +449,6 @@
             twinkleSpeed: Math.random() * 0.1,
           });
         }
-
-        // Heart constellation points (normalized coordinates)
         const heartPoints = [
           [0.5, 0.4],
           [0.45, 0.3],
@@ -581,7 +465,6 @@
           [0.65, 0.3],
           [0.55, 0.3],
         ];
-        // Replace first few stars with constellation points for guaranteed shape
         heartPoints.forEach((p, i) => {
           if (stars[i]) {
             stars[i].x = p[0] * canvas.width;
@@ -589,8 +472,6 @@
             stars[i].radius = 1.5;
           }
         });
-
-        // Ambient particles (hearts)
         const particleCount = 15;
         for (let i = 0; i < particleCount; i++) {
           particles.push({
@@ -600,7 +481,6 @@
             alpha: Math.random() * 0.3 + 0.1,
           });
         }
-
         function drawHeart(x, y, size, alpha) {
           ctxCanvas.fillStyle = `rgba(255, 178, 178, ${alpha})`;
           ctxCanvas.beginPath();
@@ -632,14 +512,10 @@
           ctxCanvas.bezierCurveTo(x + size / 2, y, x, y, x, y + size / 4);
           ctxCanvas.fill();
         }
-
-        // --- Main Animation Loop for Canvas ---
         let shootingStarOpacity = 1;
         function animate() {
           requestAnimationFrame(animate);
           ctxCanvas.clearRect(0, 0, canvas.width, canvas.height);
-
-          // Draw stars
           stars.forEach((star) => {
             star.alpha += star.twinkleSpeed;
             if (star.alpha > 1 || star.alpha < 0.2) star.twinkleSpeed *= -1;
@@ -648,8 +524,6 @@
             ctxCanvas.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
             ctxCanvas.fill();
           });
-
-          // Draw constellation
           const constellationOpacity = parseFloat(
             getComputedStyle(document.documentElement).getPropertyValue(
               "--constellation-opacity"
@@ -669,8 +543,6 @@
             }
             ctxCanvas.stroke();
           }
-
-          // Draw ambient particles (hearts)
           particles.forEach((p) => {
             p.y -= p.speed;
             if (p.y < -10) {
@@ -679,8 +551,6 @@
             }
             drawHeart(p.x, p.y, 10, p.alpha);
           });
-
-          // Spawn and draw shooting stars
           if (Math.random() < 0.05 && shootingStarOpacity > 0.1) {
             shootingStars.push({
               x: Math.random() * canvas.width * 1.5,
@@ -695,7 +565,6 @@
             s.y += s.speed * 0.6;
             s.alpha -= 0.01;
             if (s.alpha <= 0) shootingStars.splice(index, 1);
-
             ctxCanvas.beginPath();
             const grad = ctxCanvas.createLinearGradient(
               s.x,
@@ -717,14 +586,12 @@
         }
         animate();
 
-        // GSAP triggers for canvas effects
         gsap.to(":root", {
           "--constellation-opacity": 1,
           scrollTrigger: { trigger: "#finale", start: "top 80%", scrub: 1 },
         });
 
         gsap.to(shootingStars, {
-          // A bit of a hack, we animate a proxy value
           proxy: 1,
           scrollTrigger: {
             trigger: "body",
@@ -736,25 +603,40 @@
             },
           },
         });
-
+        const loveGraphData = {
+          labels: [
+            "When First Met",
+            "Our Deep Talks",
+            "Finally I Proposed",
+            "Lessons From Fights",
+            "Our Warm First Hug",
+            "Our Perfect First Kiss",
+            "More Time Together",
+            "Still Getting Closer",
+            "Understanding & Support",
+            "Growing & Maturing",
+            "Right Now, Right Here, Today",
+            "And More Importantly, Forever",
+          ],
+          data: [
+            100, 500, 1500, 800, 1000, 2200, 1600, 2900, 2500, 2800, 5000, 10000,
+          ], // Added 'Forever' to show it keeps growing
+        };
         // --- Love Graph (Chart.js) ---
-        const loveGraphCtx = document
-          .getElementById("loveGraph")
-          .getContext("2d");
-        let loveChart;
+        const loveGraphCtx = document.getElementById("loveGraph").getContext("2d");
 
         ScrollTrigger.create({
           trigger: "#finale",
           start: "top 50%",
           once: true,
           onEnter: () => {
-            loveChart = new Chart(loveGraphCtx, {
+            new Chart(loveGraphCtx, {
               type: "line",
               data: {
                 labels: loveGraphData.labels,
                 datasets: [
                   {
-                    label: "Our Love Growth",
+                    label: "Memory Points",
                     data: loveGraphData.data,
                     borderColor: "rgba(255, 5, 50, 0.5)",
                     backgroundColor: "rgba(217, 50, 71, 0.1)",
@@ -786,7 +668,7 @@
                     ticks: {
                       color: "#F0F0F0",
                       font: { family: "'Playfair Display', serif" },
-                      rotation: 90
+                      rotation: 90,
                     },
                   },
                 },
@@ -814,7 +696,375 @@
           duration: 1,
           scrollTrigger: { trigger: "#finale", start: "top 10%" },
         });
+      }
+
+      // ===================================================================
+      // ================= 1. & 2. CONTENT AND APP LOGIC ===================
+      // ===================================================================
+      // This event listener will now only set up the non-animation parts.
+      document.addEventListener("DOMContentLoaded", function () {
+        const timelineData = [
+          {
+            type: "memory",
+            image: "assets/images/felicitation.jpg",
+            caption: "I Think I LOVE Her",
+            text: "March-June, sometime, I dont know what changed or what happend, we started talking because of Amaan and Arya,\
+            I slowly started to consider you as someone I could rely upon, a good friend, someone who is sensible, someone who\
+            understands how complicated I can get, slowly those feelings turned more and more certain, you were so perfect\
+            (emphasis on *were*, you're alot more than that for me, today!) everything about you. resonated with me,\
+            the way you genuinely cared. I did feel that THIS woman, she's the one to not let go,\
+            she's not the type you'd date just to have fun, she's really someone I who'd let us to grow and learn together\
+            with and live a beautiful life. In summary, I did infact, strike gold.",
+          },
+
+          {
+            type: "question",
+            question: "How Did We Start Talking First?",
+            answers: [
+              "Because of Amaan and Arya",
+              "My Instagram Username",
+              "My Instagram Story",
+              "None Of The Above",
+            ],
+            correctAnswer: "My Instagram Story",
+          },
+
+          {
+            type: "memory",
+            image: "assets/images/dandiya.jpg",
+            caption: "She NEEDS To Be Mine",
+            text: "July-August, I just couldn't help but stop noticing always, just how beautiful, pretty and effortlessly perfect\
+            you were, everything about you was just the way I wanted, except of course, a few things, but that didn't matter,\
+            because I knew at heart, you definitely are someone who'd always be loving. I knew that if it weren't for me, obviously\
+            some other guy would take this prize of mine away from me, but I didn't really consider dating at that time, I thought it\
+            was a waste of time, nothing more. But you had such an impact on me, I had to redefine what it means to be in a\
+            relationship, I could see us growing together, not spiraling down, but learning, you wouldn't distract me,\
+            instead you'd motivate me more. So finally after about two weeks of practice and rehearse (yes), I got my courage together\
+            to say what I really honestly and genuinely felt to you. Yes, I was expecting a good hard slap, but I knew I was kind of\
+            tough so I guess that slap wouldn't hurt too much? That's the only reason I had the courage. Else we wouldn't be here today.\
+            I was expecting slap, instead I got such an amazing, AMAZING woman. Everything about that day, I still remember everything in\
+            every little detail, how your face was so flushed and shocked, you were stunned, and I was almost about say sorry for bothering.",
+          },
+
+                    {
+            type: "question",
+            question: "What Was The Name Of My Poem?",
+            answers: [
+              "I Love You",
+              "You're Perfect",
+              "The Rose",
+              "None Of The Above",
+            ],
+            correctAnswer: "None Of The Above",
+          },
+
+          {
+            type: "memory",
+            image: "assets/images/bouquetstanding.jpg",
+            caption: "She's The BEST Woman I'll Ever Meet",
+            text: "August-September, we started to understand more of each other, although we didn't get much time at first, we still managed to talk\
+            over text, it was really really good, always when I talked with you, I felt I LOVE YOU SO MUCH, even though I struggle\
+            with showing what I really think and feel, and show emotions, and I might be angry or annoyed, most of time, but still\
+            out of all that, you were still able to pickup my caring side so naturally, without me even guiding you to it. Sometimes\
+            my only motivation to come to school would just be to come and see you in the morning, the way you smile and talk, just hear\
+            your voice. Else I would probably have had a very bad attendance probably (see, relationships are good, with the right person)\
+            AND OH MY GOD COULD I SENSE IT, LITERALLY EVERY BOY IN THE CLASS WANTED YOUR ATTENTION AJDKAJSDHJKUIIHW. But you still gave\
+            it to me, you did always make me feel special, I might not always say it, but you're an absolutely perfect person. No debate.",
+          },
+
+                    {
+            type: "question",
+            question: "How Many Poems Have I Written For You? (uptill today)",
+            answers: [
+              "Fifteen",
+              "Seventeen",
+              "Nineteen",
+              "None Of The Above",
+            ],
+            correctAnswer: "Seventeen",
+          },
+
+          {
+            type: "memory",
+            image: "assets/images/lifting.jpg",
+            caption: "I Just CANNOT Stop Loving Her",
+            text: "October - December, we had our fair share of fights and ups and downs, but I never ever felt like giving up on you\
+            because I knew I do and will always love you from my heart, I knew it's just a rough patch, and there are alot more better\
+            days than worse, with you atleast. You had your problems, and I was kind of stupid to understand them, but we both tried\
+            got better at understanding each other's feelings and rough times. If only, I'd say that time has played a significant part\
+            in letting us become such a good couple we are today, granted, we have our fights now too, huge, small, silly, stupid. Whatever\
+            may be, we'll cry, we'll get angry, we'll get egotistical, heck it can go to crazy extremes given how crazy we both are.\
+            But we never ever broke up, for all, we still loved each other. That kind of love, within any couple is rare. It just goes\
+            to show how perfectly we're knitted for each other. Such a strong cohesion, even these huge insane crazy fights cant\
+            seperate us, neither they ever will have the power to. Because I will and just cannot stop loving you, everything you do\
+            I love you in it, I'm so proud of you of how you've brought yourself up even from the hardest times, not given up on me,\
+            nor anybody else in your life. I'd be so happy to hold my woman up in my arms like that everywhere,\
+            because I'm so proud and I want to let everybody know, yes, of course, this is her!!! My absolutely perfect woman did this.\
+            And I'd be the proudest man alive to say that there, knowing that I always gave my best to help her. Atleast playing\
+            a whatsoever small part in her grand scheme of things. I LOVE YOU!",
+          },
+
+                    {
+            type: "question",
+            question: "What Do I Like About You The Most?",
+            answers: [
+              "Your Caringness/Softness/Feminity",
+              "Your Understanding/Maturity/Practicality",
+              "Your Smartness/Imagination/Vision",
+              "Your Body/Beauty/Prettiness",
+            ],
+            correctAnswer: "Your Caringness/Softness/Feminity",
+          },
+
+          {
+            type: "memory",
+            image: "assets/images/kiss.jpg",
+            caption: "... She's All That, But also, She is SO SEXY.",
+            text: "January - June, slowly, besides getting close emotionally, we also started getting closer actually, we started\
+            to get more time together, we could talk more in person, and it was so so so soothing to hear you talk about your day\
+            I could sit there and listen all about you and whatever you had to say and I would mind the time because of course,\
+            besides being so good in all the other things that are to do with life, this particular woman, was also stupendously,\
+            pretty. Your hair, your skin, your hips, your lips, your eyes, your smiles. Everything about you, was something out of\
+            some fictional book, how they wrote, the woman who's smart and pretty, but in reality you only get one. Looks like\
+            I got the perfect mix of smart and pretty (and damn, she's so sexy too, only for me.) We hugged, we kissed. And yes, we also\
+            moved on to more serious things, but I never ever felt guilty with you. Because I knew, its only my wife isn't it?\ And I do take\
+            pleasure in pleasing my wife to the best of my abilities (i think i do a good job, yes?) I still remember, everything. And you know\
+            what I mean too. I'd stick to the point here, and not go on a detour about how absolutely HOT, you are, in every way. Would require,\
+            a poem of its own (oh but I've already written it, The Velvet Touch? but i guess that was not enough though). In every way, you're the\
+            perfect woman, any guy would ever want. And you should definitely know that. When you can make a disciplined man, a straight-to-the-point,\
+            no-nonsense guy, ask for one last look, you know you're onto to something seriously good.",
+          },
+
+                    {
+            type: "question",
+            question: "What Do You Think I Like The Most (but this time, *ahem ahem*, about something else)?",
+            answers: [
+              "UP",
+              "DOWN",
+              "MIDDLE",
+              "BEHIND",
+            ],
+            correctAnswer: "DOWN",
+          },
+
+          {
+            type: "memory",
+            image: "assets/images/handbouquet.jpg",
+            caption: "And OUR Love Didn't Stop There",
+            text: "July-January, we completed one full year! And still, we still love each other, we never ever got bored of each other\
+            in-fact, we only started loving each other more, and got very very close. Such a strong, precious bond. We were closer now, than\
+            we'd ever would be able to imagine our selves before. Every up, every down, instead of stealing our love throughout the year\
+            it fed the passion and intensity we had for each other. Most relationships, infact, 82% statiscally, die out by the first year.\
+            And once we make it past the first year, there's a 30% chance get married (and i geeked out more, 60% chance of marriage for relationsips of age three)\
+            But that didn't surpise me, because I always knew it was 100% Thank you for understanding me so well throughout. I know how hard\
+            I am to deal with, I never say anything easily, but you make it so easy for me to try and say to you, you never judge me, never do you\
+            ever make me feel bad, you always understand what I'm trying to say without me even saying it, you always put how I'm feeling on your top priority\
+            in our relationship, you balance our love perfectly. Sometimes you single-handedly plough through difficult times, just to keep this\
+            relationship alive, and I promise you, none of those gestures remain unseen, everything you do, I care and I value, with my heart and soul\
+            I respect you, I admire you. And we'll be forever together. Just how we celebrated your and mine birthday, I want to keep doing that together\
+            always with you (and yes one of the reason I came back from the other batch was that I did really started to miss everything about you, too much)",
+          },
+
+                    {
+            type: "question",
+            question: "What's My Favorite Music Genre",
+            answers: [
+              "Daylight-Pop/EDM",
+              "Rock/Metal",
+              "Dark-R&B/Synth-Pop",
+              "Jazz/Cinematic Music",
+            ],
+            correctAnswer: "Dark-R&B/Synth-Pop",
+          },
+
+          {
+            type: "memory",
+            image: "assets/images/cute.jpg",
+            caption: "After All That's Happened, It's Still HER.",
+            text: "February-May, we got tested and toiled and turned yet again, you had a rough patch in your life, I also had mine too.\
+            But unlike last year, this time, we had learned a bit and somewhat managed a bit better (yes, right?) we had some big fights\
+            but it was always alright. You felt I lost interest in you, but I just never could, I'd always feel my self gravitating towards you\
+            always. That's why, all through these times, there's one thing that never ever changed for me, that was YOU! I changed, you changed,\
+            we changed. But what you meant to me in August last year, you don't mean to me that much now. BECAUSE ITS SO MUCH MORE THAN THAT NOW!\
+            YOU'RE MY FRIEND, MY BUDDY, MY PARTNER, MY GILFRIEND, MY BADDIE, MY MAN, MY EVERYTHING THERE IS! You always were there with me in all my times\
+            And I want to be in yours too, always. No matter how rough a patch it is, I promise to you, that I'll always try to make everything alright\
+            even if I cant do anything much, atleast I'll listen and take your worry away, because that's my job and that's my duty. And let me tell you\
+            whatever I pick to do, I do it with full pride (that's why i like to do you too, shhh) I do my job with absolute love, and being your perfect man\
+            bears no exception. For his perfect woman, this man shall always try to be evermore better.",
+          },
+
+                    {
+            type: "question",
+            question: "When Did We First Kiss?",
+            answers: [
+              "March 20, 2024",
+              "March 21, 2024",
+              "March 22, 2024",
+              "March 23, 2024",
+            ],
+            correctAnswer: "March 20, 2024",
+          },
+
+          {
+            type: "memory",
+            image: "assets/images/autobirthday.png",
+            caption: "The PERFECT Couple & Always To Be.",
+            text: "June-August, you sometimes have doubts, whether we are good couple or not, but let me tell you this, and make you aware\
+            of this realty, yes, we are not good, we are not normal, we are BRILLIANT, EXTRAORDINARY AND PERFECT! We've seen big fights, we've\
+            seen diffrences, but yet we choose to stick together, that's definitely not just a sign of a 'good' couple. It's a sign of a couple that is\
+            going to be an absolute dream-ride. We've survived milestones, tests of time, rough patches, and most importantly, created moments that\
+            almost everybody would rather kill for. Our connection, in no way is fragile. It's deep, it's beautiful. It's... REAL. I never want you to feel\
+            like there's anybody out there better than us. I would work my hours off, not care about time, whatever it takes, I'll do it for you.\
+            To give you the lifestyle of A DUCHESS you deserve to have. There'd be no man in a million mile wide radius that'd be a better suitor for you than me.\
+            I promise, I'd always be the one you'd brag about to your friends. I primise, that I'll always work and work and work, just to put a smile on your face.\
+            Money, fame, respect, they all seem like toys, against the feeling I get after making you genuinely happy and lifting your mood. I would provide, protect, care, love\
+            , respect, and always be loyal to you, like you have always been. (also, in about 93%, yes 93%, relationships by about the third year, atleast one case of cheating is dealt with\
+            yet, we have never even THOUGHT about cheating on forget the action. That's how perfect we are) We were, are, and always would be, the PERFECT couple.",
+          },
+
+                    {
+            type: "question",
+            question: "What's Our Unspoken Rule?",
+            answers: [
+              "No Sleeping Without A Goodnight Text",
+              "No Leaving Without An I Love You",
+              "Occasionaly Making Fun Of Each other",
+              "No Rules Apply",
+            ],
+            correctAnswer: "No Leaving Without An I Love You",
+          },
+
+          {
+            type: "memory",
+            image: "assets/images/mall.jpg",
+            caption: "Yes, I STILL, Look At You The Same Way",
+            text: "September-Forever, here we are now, Duke and Duchess of our own story, an epic story, we'd tell our kids,\
+            something straight out of a hollywood blockbuster (well it's only 20% done, yet, still so complete),\
+            I still look at you the same way I did in that image, but only its ALOT deeper. Back then, I saw a girl whose my love.\
+            Today, I see a woman I want to spend my every tomorrow with. Today, I don't just see your beauty (though I still just CANNOT\
+            put a leash on my desires, why must you be so irresistable) I see your strength when times get hard, your softness when\
+            I need comfort, your flaws that make you real, your dreams that make me excited for our tommorow, and your fire\
+            that makes me fall in love all over again. You are not just the girl I once fell for, you are the woman I choose, again and again, without hesitation.\
+            Everything still, just hits right where it needs to with you. Every touch still feels right. And every moment with you, even the ordinary ones,\
+            feels like a memory worth keeping stored (like the unnumbered photos you keep on your phone, except, I'd never delete them).\
+            I don't just love who you are anymore, I love who I get to be with you, and who you are with me. Together.\
+            So no matter the month or year, the summer or winter, february or december, decades from now, my eyes will never stop wanting more of your form and figure,\
+            my heart will never stop unraveling yours and my soul will never stop intertwining with yours. I don't promise forever anymore. For now, forever is a certainty.",
+          },
+
+                    {
+            type: "question",
+            question: "Do You Think I Still 'Love' You?",
+            answers: [
+              "Yes",
+              "No",
+            ],
+            correctAnswer: "No",
+          },
+        ];
+
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+          ],
+        });
+        const timelineContainer = document.getElementById("timeline-container");
+        const finaleSection = document.getElementById("finale");
+        let questions = [];
+
+        function buildTimeline() {
+          let contentHtml = "";
+          timelineData.forEach((item, index) => {
+            if (item.type === "memory") {
+              contentHtml += `
+                <section class="timeline-item">
+                  <div class="memory-card">
+                    <figure class="polaroid">
+                      <img src="${item.image}" alt="Memory Image ${index + 1}" loading="lazy">
+                      <figcaption>${item.caption}</figcaption>
+                    </figure>
+                    <p class="text-brand-light/80 md:text-lg mt-8">${
+                      item.text
+                    }</p>
+                  </div>
+                </section>`;
+            } else if (item.type === "question") {
+              const answersHtml = item.answers
+                .map(
+                  (answer) =>
+                    `<button class="answer-option" data-correct="${answer === item.correctAnswer}">${answer}</button>`
+                ).join("");
+              contentHtml += `
+                <section class="timeline-item">
+                  <div class="question-card relative" data-answered="false">
+                    <div class="confetti-container"></div>
+                    <h3 class="text-lg italic md:text-lg font-serif font-semibold mb-4">${item.question}</h3>
+                    <div class="answers-container">${answersHtml}</div>
+                  </div>
+                </section>`;
+              questions.push(item);
+            }
+          });
+          finaleSection.parentElement.insertAdjacentHTML(
+            "beforebegin",
+            contentHtml
+          );
+        }
+        buildTimeline();
+
+        document
+          .querySelectorAll(".answers-container")
+          .forEach((container) => {
+            container.addEventListener("click", (e) => {
+              const button = e.target.closest(".answer-option");
+              if (button && !button.disabled) {
+                const parentCard = button.closest(".question-card");
+                if (parentCard.dataset.answered === "true") return;
+                parentCard.dataset.answered = "true";
+                const isCorrect = button.dataset.correct === "true";
+                parentCard
+                  .querySelectorAll(".answer-option")
+                  .forEach((opt) => (opt.disabled = true));
+                if (isCorrect) {
+                  button.classList.add("correct");
+                  triggerConfetti(
+                    parentCard.querySelector(".confetti-container")
+                  );
+                } else {
+                  button.classList.add("incorrect");
+                  parentCard
+                    .querySelector('[data-correct="true"]')
+                    .classList.add("correct");
+                }
+              }
+            });
+          });
+
+        function triggerConfetti(container) {
+          for (let i = 0; i < 30; i++) {
+            const c = document.createElement("div");
+            c.classList.add("confetti");
+            c.style.left = `${Math.random() * 100}%`;
+            c.style.backgroundColor =
+              Math.random() > 0.5 ? "#FF8C8C" : "#4ECDC4";
+            const duration = 2 + Math.random() * 3;
+            const delay = Math.random() * 1;
+            c.style.animation = `fall ${duration}s ${delay}s linear forwards`;
+            c.style.setProperty(
+              "--rotate-deg",
+              `${Math.random() * 720 - 360}deg`
+            );
+            container.appendChild(c);
+            setTimeout(() => c.remove(), (duration + delay) * 1000 + 100);
+          }
+        }
+
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `@keyframes fall { from { transform: translateY(-20px) rotate(0deg); opacity: 1; } to { transform: translateY(200px) rotate(var(--rotate-deg)); opacity: 0; } }`;
+        document.head.appendChild(styleSheet);
       });
     </script>
   </body>
 </html>
+<!-- MADE WITH LOVE BY ARYAN MISHRA -->
